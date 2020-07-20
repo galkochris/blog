@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <hr>
+  {% if posts %}
+    <div class="card-columns">
+      {% for post in posts %}
+        {% include "partials/card.html" %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-primary" role="alert">No posts to display.</div>
+  {% endif %}
+{% endblock %}

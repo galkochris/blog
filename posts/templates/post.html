@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="row">
+    <div class="col m-4">
+      <h3>{{ post.title }}</h3>
+      <p> Author: {{ post.Author }}</p>
+        <img src= '{{ post.image }}'>
+      <hr>
+      <p> What {{post.Author}} has to say: </p>
+          <br>
+          <br>
+       <p> {{ post.post }}</p>
+      <hr>
+      {% for comment in comments %}  
+      <ul>
+          <p>Comment: {{ comment.title }}</p>
+          <p>By: {{ comment.Author }}</p>
+          <p>{{ comment.comment }}</p>
+        </ul>
+        {% endfor %}
+        <a href="{% url 'posts-list-page' %}">Back to List</a>
+    </div>
+  </div>
+{% endblock %}
