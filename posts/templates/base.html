@@ -12,10 +12,12 @@
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <a class="navbar-brand" href="{% url 'posts-list-page' %}"><i class="fas fa-fw fa-book"></i>Posts</a>
       <form class="form-inline ml-auto">
+        
         {% if request.user.is_authenticated %}
         <div class="text-white">Hello, <strong>{{ request.user.username }}</strong>!</div>
-
-        <a href="/posts/create" class="btn btn-success ml-4">New Post</a>
+          {% if request.user.is_superuser %}
+            <a href="/posts/create" class="btn btn-success ml-4">New Post</a>
+          {% endif %}
         <a href="/users/logout" class="btn btn-danger ml-2">Log Out</a>
         {% endif %}
 

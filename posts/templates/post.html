@@ -3,22 +3,35 @@
 {% block content %}
   <div class="row">
     <div class="col m-4">
+
       <h3>{{ post.title }}</h3>
-      <p> Author: {{ post.Author }}</p>
+      <p> Author: {{ post.author }}</p>
         <img src= '{{ post.image }}'>
       <hr>
-      <p> What {{post.Author}} has to say: </p>
+      <p> What {{post.author}} has to say: </p>
           <br>
           <br>
        <p> {{ post.post }}</p>
       <hr>
-      {% for comment in comments %}  
-      <ul>
-          <p>Comment: {{ comment.title }}</p>
-          <p>By: {{ comment.Author }}</p>
-          <p>{{ comment.comment }}</p>
-        </ul>
-        {% endfor %}
+
+        <a class="btn btn-success mb-2" href="{% url 'create_comment' pk=post.pk %}">Add comment</a>
+
+      {% for comment in post.comments.all %}
+        <div class="comment">
+          <p class="info">
+            By: {{ comment.author }}
+            On: {{ comment.created }}
+          </p>
+          <p>
+            <strong>
+              {{ comment.body|linebreaks }}
+            </strong> 
+          </p>
+        </div>
+      {% empty %}
+        <p>There are no comments yet.</p>
+      {% endfor %}
+
         <a href="{% url 'posts-list-page' %}">Back to List</a>
     </div>
   </div>

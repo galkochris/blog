@@ -6,8 +6,13 @@
         <hr>
         <div class="text-right"><a href="{% url 'posts-details-page' post.id %}" title="Read More">Read More</a></div>
     </div>
+    <div>
+      <h3 class="ml-2">
+        Comments: {{ post.comments.count }}
+      </h3>
+    </div>
     <div class="card-footer">
-      <small class="text-muted">Last updated {{ page.modified|date:"SHORT_DATETIME_FORMAT" }} by <b>{{ post.Author.username }}</b></small>
+      <small class="text-muted">Last updated {{ page.modified|date:"SHORT_DATETIME_FORMAT" }} by <b>{{ post.author.username }}</b></small>
     </div>
   </div>
   

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView
@@ -13,7 +13,7 @@ from datetime import datetime
 
 
 from posts.models import Post, Comment
-from posts.forms import PostForm
+from posts.forms import PostForm, CommentForm
 
 
 
@@ -28,17 +28,6 @@ class PostListView(ListView):
           'posts': posts
         })
 
-class CommentListView(ListView):
-    """ Renders a list of all events. """
-    model = Comment
-
-    def get(self, request):
-        """ GET a list of events. """
-        event = self.get_queryset().all()
-        return render(request, 'comment.html', {
-          'event': event
-        })
-
 class PostDetailView(DetailView):
     model = Post
     template_name = 'post.html'
@@ -50,7 +39,7 @@ class PostDetailView(DetailView):
         return context
 
     def post(self, request, pk):
-      form = PostForm(request.POST)
+      form = PostForm(request.POST)                  
 
       if form.is_valid():
         post = form.save(commit=False)
@@ -64,6 +53,20 @@ class PostDetailView(DetailView):
         return HttpResponseRedirect(
           reverse('posts-details-page', args=[pk]))
       return render(request, 'post.html', {'form': form})
+    
+    def comment(self, request, pk):
+      post = get_object_or_404(Post, pk=pk)
+      form = CommentForm(request.POST)
+      if request.method == "POST":
+        if form.is_valid():
+          comment = form.save(commit=False)
+          comment.post = post
+          comment.save()
+          return HttpResponseRedirect(
+            reverse('posts-details-page', args=[pk]))
+      return render(request, 'post.html', {'form': form})
+
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('login')
@@ -80,9 +83,24 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         
         if form.is_valid:
             post = form.save(commit=False)
-            post.Author = request.user
+            post.author = request.user
             post.save()
             return HttpResponseRedirect(
                 reverse('posts-details-page', args=[post.id]))
         #else
         return render(request, 'create.html', { 'form':form })
+
+def create_comment(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            return HttpResponseRedirect(
+                reverse('posts-details-page', args=[post.pk]))
+    else:
+        form = CommentForm()
+    return render(request, 'create_comment.html', {'form': form})

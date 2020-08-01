@@ -9,13 +9,22 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     post = models.CharField(max_length=1600)
     image = models.ImageField(upload_to='posts', default='blog_images')
-    Author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.title
 
 class Comment(models.Model):
-    title = models.CharField(max_length=50)
-    comment = models.CharField(max_length=400)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=False)
-    Author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    post = models.ForeignKey(Post,
+                                on_delete=models.CASCADE,
+                                related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    body = models.TextField()
+    created = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ('created',)
+    
+    def __str__(self):
+        return 'Comment by {} on {}'.format(self.author, self.post)
+
